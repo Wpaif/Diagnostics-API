@@ -2,6 +2,12 @@ require 'sinatra'
 require 'pg'
 require 'rack/handler/puma'
 
+Rack::Handler::Puma.run(
+  Sinatra::Application,
+  Port: 3000,
+  Host: '0.0.0.0'
+)
+
 get '/diagnostics' do
   content_type :json
 
@@ -11,9 +17,3 @@ get '/diagnostics' do
   result = db.exec('SELECT * FROM "diagnostics"')
   result.map { |tuple| tuple }.to_json
 end
-
-Rack::Handler::Puma.run(
-  Sinatra::Application,
-  Port: 3000,
-  Host: '0.0.0.0'
-)

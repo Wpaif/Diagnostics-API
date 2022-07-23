@@ -11,9 +11,9 @@ class TestImportCsv < Test::Unit::TestCase
     db = PG.connect dbname: 'hospital_data', host: 'test-db', user: 'postgres', password: 'mypass'
 
     CsvHandler.new('./tests/tests_helper/test_data.csv').import_csv
-    db_data = db.exec('SELECT * FROM diagnostics').values
     db_colunm = db.exec("SELECT column_name FROM information_schema.columns WHERE table_name = 'diagnostics'")
                   .values.flatten
+    db_data = db.exec('SELECT * FROM diagnostics').values
 
     assert_equal db_data, csv_data
     db_colunm.each { |column| assert_include csv_column, column }
