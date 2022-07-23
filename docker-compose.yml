@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  app:
+    image: ruby
+    command: bash -c 'bundle install && ruby import_from_csv.rb && ruby server.rb'
+    ports:
+      - 3000:3000
+    working_dir: /app
+    volumes:
+      - ./:/app
+  db:
+    image: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mypass
+      POSTGRES_DB: hospital_data
+  test-db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mypass
+      POSTGRES_DB: hospital_data
+volumes:
+  db-data:
