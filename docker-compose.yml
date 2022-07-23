@@ -19,9 +19,12 @@ services:
       POSTGRES_DB: hospital_data
   test-db:
     image: postgres
+    volumes:
+      - test-db-data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: mypass
       POSTGRES_DB: hospital_data
 volumes:
   db-data:
+  test-db-data:
