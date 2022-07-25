@@ -1,3 +1,6 @@
 require './csv_handler'
 
-CsvHandler.new('./data.csv').import_csv
+service = CsvHandler.new
+service.drop_table
+service.set_table
+service.insert_data_into_database File.read('./data.csv')

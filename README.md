@@ -9,13 +9,11 @@ API em Ruby para listagem de exames médicos.
 
 ## Executando o projeto
 
-1. Execute o seguinte comando no emulador de terminal:
+- Execute o seguinte comando no emulador de terminal:
 
     ```bash
     docker compose up
     ```
-2. Visite <http://localhost:3000/diagnostics>.
-
 ### Executando testes
 
 1. Execute o seguinte comando no emulador de terminal:
@@ -28,3 +26,13 @@ API em Ruby para listagem de exames médicos.
     ```bash
     docker exec -it rebase-challengefinal-app-1 ruby include_tests.rb
     ```
+
+## Endpoints
+
+### GET /diagnostics
+Ao realizar uma requisição em <localhost:3000/diagnostics>, será retornado todos os diagnósticos disponiveis no momento.
+
+### POST /insert
+Ao realizar uma requisição em <localhost:3000/insert>, será possível adicionar novos diagnósticos ao banco de dados.
+- Headers: Content_Type: text/csv
+- Body: texto no formato CSV 

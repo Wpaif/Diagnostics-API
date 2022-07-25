@@ -2,26 +2,15 @@ require 'pg'
 require 'csv'
 
 class CsvHandler
-  def initialize(file_path)
-    @file_path = file_path
-    @db = ENV['APP_ENV'].eql?('test') ? 'test-db' : 'db'
+  def initialize
+    @database = ENV['APP_ENV'] == 'test' ? 'test-db' : 'db'
+    @db = PG.connect dbname: 'hospital_data', host: @database, user: 'postgres', password: 'mypass'
   end
 
-  def import_csv
-    db = PG.connect dbname: 'hospital_data', host: @db, user: 'postgres', password: 'mypass'
-    set_table(db)
-    insert_data_into_database(db)
-    db.close
-  end
-
-  private
-
-  def set_table(db)
-    db.exec(
+  def set_table
+    @db.exec(
       '
-        DROP TABLE IF EXISTS diagnostics;
-
-        CREATE TABLE diagnostics (
+        CREATE TABLE IF NOT EXISTS diagnostics (
           "cpf" VARCHAR(14),
           "nome paciente" VARCHAR(100),
           "email paciente" VARCHAR(100),
@@ -43,12 +32,16 @@ class CsvHandler
     )
   end
 
-  def insert_data_into_database(db)
-    CSV.foreach(@file_path, headers: true, col_sep: ';') do |row|
-      db.exec_params(
+  def insert_data_into_database(data)
+    CSV.new(data, headers: true, col_sep: ';').each do |row|
+      @db.exec_params(
         'INSERT INTO diagnostics VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)',
         row.fields
       )
     end
+  end
+
+  def drop_table
+    @db.exec('DROP TABLE IF EXISTS diagnostics')
   end
 end

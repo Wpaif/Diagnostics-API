@@ -1,31 +1,26 @@
 require 'sinatra'
 require 'rack/handler/puma'
-require 'pg'
-require 'csv'
+require './queries_handler'
 require './csv_handler'
 
 get '/diagnostics' do
-  content_type :json
+  content = QueriesHandler.new.set_tests_db
+  if content
+    content_type :json
+    return content
+  end
 
-  database = ENV['APP_ENV'].eql?('test') ? 'test-db' : 'db'
-  db = PG.connect dbname: 'hospital_data', host: database, user: 'postgres', password: 'mypass'
-
-  result = db.exec('SELECT * FROM "diagnostics"')
-  result.map { |row| row }.to_json
+  content_type :text
+  'Não há diagnósticos registrados.'
 end
 
 post '/insert' do
-  database = ENV['APP_ENV'].eql?('test') ? 'test-db' : 'db'
-  db = PG.connect dbname: 'hospital_data', host: database, user: 'postgres', password: 'mypass'
-
-  csv = CSV.new(request.body.read, headers: true, col_sep: ';')
-  csv.each do |row|
-    db.exec_params(
-      'INSERT INTO diagnostics VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)',
-      row.fields
-    )
-  end
-  [201, 'Dados foram enseridos com sucesso!']
+  service = CsvHandler.new
+  service.set_table
+  service.insert_data_into_database request.body.read
+  [201, 'Os dados foram inseridos com sucesso.']
+rescue PG::ProtocolViolation
+  [422, 'Os dados pasados estão em formato inválido.']
 end
 
 Rack::Handler::Puma.run(
