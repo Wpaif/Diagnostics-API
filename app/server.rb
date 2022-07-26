@@ -4,7 +4,7 @@ require_relative 'queries_handler'
 require_relative 'csv_handler'
 
 get '/diagnostics' do
-  content = QueriesHandler.new.set_tests_db
+  content = QueriesHandler.set_tests_db
   if content
     content_type :json
     return content

@@ -9,6 +9,7 @@ services:
     working_dir: /app
     volumes:
       - ./app:/app
+      - bundle-cache:/usr/local/bundle
     environment:
       APP_ENV: development
       DB: db
@@ -19,6 +20,7 @@ services:
     volumes:
       - ./app:/app
       - ./tests:/tests
+       - bundle-cache:/usr/local/bundle
     environment:
       APP_ENV: test
       DB: test-db
@@ -41,3 +43,4 @@ services:
 volumes:
   db-data:
   test-db-data:
+  bundle-cache:

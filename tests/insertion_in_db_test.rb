@@ -34,6 +34,19 @@ class TestInsert < Test::Unit::TestCase
     db_columns.each { |column| assert_include csv_columns, column }
   end
 
+  def test_drop_table_successfully
+    db = PG.connect dbname: 'hospital_data', host: 'test-db', user: 'postgres', password: 'mypass'
+    service = CsvHandler.new
+    service.set_table
+
+    service.drop_table
+    table_in_db = db.exec("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'diagnostics')")
+                    .getvalue(0, 0)
+    db.close
+
+    assert_equal 'f', table_in_db
+  end
+
   def test_enter_data_successfully
     expected_db_data = JSON.parse(File.read("#{Dir.pwd}/tests_helper/test_db_data.json"))
     service = CsvHandler.new
@@ -55,24 +68,21 @@ class TestInsert < Test::Unit::TestCase
     assert_equal expected_db_data, JSON.parse(QueriesHandler.set_tests_db)
   end
 
-  def try_to_insert_data_into_a_non_existent_table
-    service = ImportService.new.set_table
+  def test_try_to_enter_data_into_a_non_existent_table
+    service = CsvHandler.new
+    service.set_table
 
     assert_raise(PG::ProtocolViolation) do
       service.insert_data_into_database File.read("#{Dir.pwd}/tests_helper/test_invalid_data.csv")
     end
   end
 
-  def test_drop_table_successfully
-    db = PG.connect dbname: 'hospital_data', host: 'test-db', user: 'postgres', password: 'mypass'
+  def test_enter_data_invalid
     service = CsvHandler.new
     service.set_table
 
-    service.drop_table
-    table_in_db = db.exec("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'diagnostics')")
-                    .getvalue(0, 0)
-    db.close
-
-    assert_equal 'f', table_in_db
+    assert_raise(PG::ProtocolViolation) do
+      service.insert_data_into_database File.read("#{Dir.pwd}/tests_helper/test_invalid_data.csv")
+    end
   end
 end
