@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'rack/handler/puma'
-require_relative 'queries_handler'
 require_relative 'csv_handler'
+require_relative 'queries_handler'
 
 get '/diagnostics' do
   content = QueriesHandler.set_tests_db

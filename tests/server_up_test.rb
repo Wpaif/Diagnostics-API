@@ -1,3 +1,4 @@
+require 'pg'
 require 'test/unit'
 require 'net/http'
 require_relative '../app/csv_handler'
@@ -5,7 +6,6 @@ require_relative '../app/queries_handler'
 
 class TestServerUp < Test::Unit::TestCase
   def teardown
-    require 'pg'
     db = PG.connect dbname: 'hospital_data', host: 'test-db', user: 'postgres', password: 'mypass'
     db.exec('DROP TABLE IF EXISTS diagnostics')
     db.close
@@ -45,17 +45,6 @@ class TestServerUp < Test::Unit::TestCase
     assert_equal expected_db_data, JSON.parse(QueriesHandler.set_tests_db)
   end
 
-  def test_post_with_invalid_data
-    address = Net::HTTP.new('localhost', 3000)
-    request = Net::HTTP::Post.new('/insert', 'Content-Type': 'text/csv')
-    request.body = File.read("#{Dir.pwd}/tests_helper/test_invalid_data.csv")
-
-    response = address.request(request)
-
-    assert_equal response.code, '422'
-    assert_equal 'Os dados pasados estão em formato inválido.'.force_encoding('ascii-8bit'), response.body
-  end
-
   def test_post_insert_multiple_times
     address = Net::HTTP.new('localhost', 3000)
     first_request = Net::HTTP::Post.new('/insert', 'Content-Type': 'text/csv')
@@ -68,5 +57,16 @@ class TestServerUp < Test::Unit::TestCase
     address.request(second_request)
 
     assert_equal expected_db_data, JSON.parse(QueriesHandler.set_tests_db)
+  end
+
+  def test_post_import_invalid_data
+    address = Net::HTTP.new('localhost', 3000)
+    request = Net::HTTP::Post.new('/insert', 'Content-Type': 'text/csv')
+    request.body = File.read("#{Dir.pwd}/tests_helper/test_invalid_data.csv")
+
+    response = address.request(request)
+
+    assert_equal '422', response.code
+    assert_equal 'Os dados pasados estão em formato inválido.'.force_encoding('ascii-8bit'), response.body
   end
 end

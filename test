@@ -1,6 +1,6 @@
 #!/bin/bash
 
 docker exec \
-  rebase-challengefinal-tests-1 \
+  rebase-challenge-tests-1 \
   bash \
   -c 'cd ../tests && ruby include_tests.rb'

@@ -10,7 +10,7 @@ class TestInsert < Test::Unit::TestCase
     db.close
   end
 
-  def test_create_table
+  def test_set_table
     db = PG.connect dbname: 'hospital_data', host: 'test-db', user: 'postgres', password: 'mypass'
     csv_columns = CSV.read("#{Dir.pwd}/tests_helper/test_data.csv", headers: true, col_sep: ';').headers
 
@@ -22,14 +22,16 @@ class TestInsert < Test::Unit::TestCase
     db_columns.each { |column| assert_include csv_columns, column }
   end
 
-  def test_create_table_that_already_exists
+  def test_set_table_that_already_exists
     db = PG.connect dbname: 'hospital_data', host: 'test-db', user: 'postgres', password: 'mypass'
     csv_columns = CSV.read("#{Dir.pwd}/tests_helper/test_data.csv", headers: true, col_sep: ';').headers
     service = CsvHandler.new
     service.set_table
 
+    service.set_table
     db_columns = db.exec("SELECT column_name FROM information_schema.columns WHERE table_name = 'diagnostics'")
                    .values.flatten
+    db.close
 
     db_columns.each { |column| assert_include csv_columns, column }
   end
@@ -69,11 +71,8 @@ class TestInsert < Test::Unit::TestCase
   end
 
   def test_try_to_enter_data_into_a_non_existent_table
-    service = CsvHandler.new
-    service.set_table
-
-    assert_raise(PG::ProtocolViolation) do
-      service.insert_data_into_database File.read("#{Dir.pwd}/tests_helper/test_invalid_data.csv")
+    assert_raise(PG::UndefinedTable) do
+      CsvHandler.new.insert_data_into_database File.read("#{Dir.pwd}/tests_helper/test_data.csv")
     end
   end
 
