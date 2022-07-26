@@ -3,8 +3,7 @@ require 'csv'
 
 class CsvHandler
   def initialize
-    @database = ENV['APP_ENV'] == 'test' ? 'test-db' : 'db'
-    @db = PG.connect dbname: 'hospital_data', host: @database, user: 'postgres', password: 'mypass'
+    @db = PG.connect dbname: 'hospital_data', host: ENV['DB'], user: 'postgres', password: 'mypass'
   end
 
   def set_table
