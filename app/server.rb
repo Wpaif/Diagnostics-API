@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'rack/handler/puma'
-require_relative 'csv_handler'
 require_relative 'queries_handler'
+require_relative './sidekiq/import_worker'
 
 get '/diagnostics' do
   content = QueriesHandler.set_tests_db
@@ -15,12 +15,13 @@ get '/diagnostics' do
 end
 
 post '/insert' do
-  service = CsvHandler.new
-  service.set_table
-  service.insert_data_into_database request.body.read
+  csv = CSV.parse(request.body.read, headers: true, col_sep: ';')
+  return [422, 'Os dados pasados estão no formato inválido.'] unless csv.headers.count.eql?(16)
+
+  csv.each do |row|
+    ImportWorker.perform_async(row.fields, ENV['DB'])
+  end
   [201, 'Os dados foram inseridos com sucesso.']
-rescue PG::ProtocolViolation
-  [422, 'Os dados pasados estão em formato inválido.']
 end
 
 Rack::Handler::Puma.run(

@@ -4,41 +4,68 @@ services:
   app:
     image: ruby
     command: bash -c 'bundle install && ruby server.rb'
+    depends_on:
+      - db
+      - sidekiq
     ports:
       - 3000:3000
     working_dir: /app
     volumes:
       - ./app:/app
     environment:
-      APP_ENV: development
       DB: db
-  tests:
-    image: ruby
-    command: bash -c 'bundle install && ruby server.rb'
-    working_dir: /app
-    volumes:
-      - ./app:/app
-      - ./tests:/tests
-    environment:
-      APP_ENV: test
-      DB: test-db
+      APP_ENV: development
+      REDIS_URL: redis://redis:6379
+
   db:
     image: postgres
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
+      POSTGRES_DB: hospital_data
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: mypass
-      POSTGRES_DB: hospital_data
+
+  sidekiq:
+    image: ruby
+    command: bash -c "bundle && sidekiq -r './import_worker.rb'"
+    depends_on:
+      - redis
+    volumes:
+      - ./app:/app
+    working_dir: /app/sidekiq
+    environment:
+      REDIS_URL: redis://redis:6379
+
+  redis:
+    image: redis
+    volumes:
+      - redis-cache:/data  
+
+  tests:
+    image: ruby
+    command: bash -c 'bundle && ruby server.rb'
+    depends_on:
+      - test-db
+      - sidekiq
+    working_dir: /app
+    volumes:
+      - ./app:/app
+      - ./tests:/tests
+    environment:
+      DB: test-db
+      APP_ENV: test
+
   test-db:
     image: postgres
     volumes:
       - test-db-data:/var/lib/postgresql/data
     environment:
+      POSTGRES_DB: hospital_data
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: mypass
-      POSTGRES_DB: hospital_data
+
 volumes:
   db-data:
+  redis-cache:
   test-db-data:
-  bundle-cache:

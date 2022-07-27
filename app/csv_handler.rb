@@ -2,8 +2,8 @@ require 'pg'
 require 'csv'
 
 class CsvHandler
-  def initialize
-    @db = PG.connect dbname: 'hospital_data', host: ENV['DB'], user: 'postgres', password: 'mypass'
+  def initialize(db)
+    @db = PG.connect dbname: 'hospital_data', host: db, user: 'postgres', password: 'mypass'
   end
 
   def set_table
@@ -32,12 +32,10 @@ class CsvHandler
   end
 
   def insert_data_into_database(data)
-    CSV.new(data, headers: true, col_sep: ';').each do |row|
-      @db.exec_params(
-        'INSERT INTO diagnostics VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)',
-        row.fields
-      )
-    end
+    @db.exec_params(
+      ' INSERT INTO diagnostics VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) ',
+      data
+    )
   end
 
   def drop_table

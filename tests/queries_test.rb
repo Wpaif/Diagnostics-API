@@ -11,10 +11,12 @@ class TestQueries < Test::Unit::TestCase
   end
 
   def test_try_get_tests_successfully
-    service = CsvHandler.new
+    service = CsvHandler.new('test-db')
     service.set_table
-    service.insert_data_into_database File.read("#{Dir.pwd}/tests_helper/test_data.csv")
-    expected_result = JSON.parse(File.read("#{Dir.pwd}/tests_helper/test_db_data.json"))
+    CSV.foreach("#{Dir.pwd}/tests_helper/test_query_data.csv", headers: true, col_sep: ';') do |row|
+      service.insert_data_into_database row.fields
+    end
+    expected_result = JSON.parse(File.read("#{Dir.pwd}/tests_helper/test_query_db_data.json"))
 
     result = QueriesHandler.set_tests_db
 
