@@ -40,5 +40,5 @@ Ao realizar uma requisição em <localhost:3000/insert>, será possível adicion
 
 | Headers                    | Body                    |
 | ----------------------     | ---------------------   |
-| Content_Type: text/csv     | Texto no formato SCV    |
+| Content_Type: text/csv     | Texto no formato CSV    |
 
