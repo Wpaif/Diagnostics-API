@@ -16,7 +16,7 @@ class TestQueries < Test::Unit::TestCase
     CSV.foreach("#{Dir.pwd}/tests_helper/test_query_data.csv", headers: true, col_sep: ';') do |row|
       service.insert_data_into_database row.fields
     end
-    expected_result = JSON.parse(File.read("#{Dir.pwd}/tests_helper/test_query_db_data.json"))
+    expected_result = JSON.parse File.read("#{Dir.pwd}/tests_helper/test_query_db_data.json")
 
     result = QueriesHandler.set_tests_db
 
@@ -25,6 +25,31 @@ class TestQueries < Test::Unit::TestCase
 
   def test_try_get_tests_in_empty_db
     result = QueriesHandler.set_tests_db
+
+    assert_equal false, result
+  end
+
+  def test_get_tests_token_success
+    service = CsvHandler.new('test-db')
+    service.set_table
+    CSV.foreach("#{Dir.pwd}/tests_helper/test_token_data.csv", headers: true, col_sep: ';') do |row|
+      service.insert_data_into_database row.fields
+    end
+    expected_result = JSON.parse File.read("#{Dir.pwd}/tests_helper/test_token_db_data.json")
+
+    result = QueriesHandler.get_tests_token('AIWH8Y')
+
+    assert_equal expected_result, JSON.parse(result)
+  end
+
+  def test_get_tests_token_not_found
+    service = CsvHandler.new('test-db')
+    service.set_table
+    CSV.foreach("#{Dir.pwd}/tests_helper/test_token_data.csv", headers: true, col_sep: ';') do |row|
+      service.insert_data_into_database row.fields
+    end
+
+    result = QueriesHandler.get_tests_token('ASDFGH')
 
     assert_equal false, result
   end

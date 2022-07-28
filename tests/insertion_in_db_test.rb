@@ -50,7 +50,7 @@ class TestInsert < Test::Unit::TestCase
   end
 
   def test_enter_data_successfully
-    expected_db_data = JSON.parse(File.read("#{Dir.pwd}/tests_helper/test_db_data1.json"))
+    expected_db_data = JSON.parse File.read("#{Dir.pwd}/tests_helper/test_db_data1.json")
     service = CsvHandler.new('test-db')
     service.set_table
 
@@ -64,7 +64,7 @@ class TestInsert < Test::Unit::TestCase
   def test_enter_data_multiple_times
     service = CsvHandler.new('test-db')
     service.set_table
-    expected_db_data = JSON.parse(File.read("#{Dir.pwd}/tests_helper/test_multiple_insert_db_data.json"))
+    expected_db_data = JSON.parse File.read("#{Dir.pwd}/tests_helper/test_multiple_insert_db_data.json")
 
     CSV.foreach("#{Dir.pwd}/tests_helper/test_data1.csv", headers: true, col_sep: ';') do |row|
       service.insert_data_into_database row.fields
