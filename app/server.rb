@@ -14,6 +14,17 @@ get '/diagnostics' do
   'Não há diagnósticos registrados.'
 end
 
+get '/diagnostics/:token' do
+  content = QueriesHandler.get_tests_token(params[:token])
+  if content
+    content_type :json
+    return content
+  end
+
+  content_type :text
+  [404, 'Diagnóstico não encontrado.']
+end
+
 post '/insert' do
   csv = CSV.parse(request.body.read, headers: true, col_sep: ';')
   return [422, 'Os dados pasados estão no formato inválido.'] unless csv.headers.count.eql?(16)

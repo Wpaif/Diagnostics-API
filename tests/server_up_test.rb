@@ -42,7 +42,37 @@ class TestServerUp < Test::Unit::TestCase
 
     response = address.request(request)
 
-    assert_equal '422', response.code
+    assert_equal response.code, '422'
     assert_equal 'Os dados pasados estão no formato inválido.'.force_encoding('ascii-8bit'), response.body
+  end
+
+  def token_found_successfully
+    service = CsvHandler.new('test-db')
+    service.set_table
+    CSV.foreach("#{Dir.pwd}/tests_helper/test_token_data.csv", headers: true, col_sep: ';') do |row|
+      service.insert_data_into_database row.fields
+    end
+    expected_response_body = JSON.parse(File.read("#{Dir.pwd}/tests_helper/test_token_db_data.json"))
+
+    response = Net::HTTP.get_response 'localhost', '/diagnostics/AIWH8Y', 3000
+
+    assert_equal response.code, '200'
+    assert_equal 'application/json', response['Content-Type']
+    assert_equal expected_response_body, JSON.parse(response.body)
+  end
+
+  def token_not_found
+    service = CsvHandler.new('test-db')
+    service.set_table
+    CSV.foreach("#{Dir.pwd}/tests_helper/test_token_data.csv", headers: true, col_sep: ';') do |row|
+      service.insert_data_into_database row.fields
+    end
+    expected_response_body = JSON.parse(File.read("#{Dir.pwd}/tests_helper/test_token_db_data.json"))
+
+    response = Net::HTTP.get_response 'localhost', '/diagnostics/ABCDEF', 3000
+
+    assert_equal response.code, '404'
+    assert_equal 'text/plain;charset=utf-8', response['Content-Type']
+    assert_equal 'Diagnóstico não encontrado.'.force_encoding('ascii-8bit'), response.body
   end
 end
