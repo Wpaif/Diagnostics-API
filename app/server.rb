@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'rack/handler/puma'
 require_relative 'queries_handler'
-require_relative './sidekiq/import_worker'
+require_relative 'sidekiq/import_worker'
 
 get '/diagnostics' do
   content = QueriesHandler.set_tests_db

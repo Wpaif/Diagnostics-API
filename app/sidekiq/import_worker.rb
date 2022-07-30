@@ -6,8 +6,8 @@ class ImportWorker
   include Sidekiq::Worker
 
   def perform(csv, db)
-    service = CsvHandler.new(db)
-    service.create_table
-    service.insert(csv)
+    handler = CsvHandler.new(db)
+    handler.set_table
+    handler.insert_data_into_database csv
   end
 end
