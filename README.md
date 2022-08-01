@@ -1,4 +1,4 @@
-# Rebase Challenge 2022
+# Rebase Challenge
 
 API em Ruby para listagem de exames médicos.
 
@@ -116,3 +116,14 @@ cpf;nome paciente;email paciente;data nascimento paciente;endereço/rua paciente
 089.034.562-70;Patricia Gentil;herta_wehner@krajcik.name;1998-02-25;5334 Rodovia Thiago Bittencourt;Jequitibá;Paraná;B0000DHDOF;MT;Luiz Felipe Raia Jr.;marshall@brekke-funk.name;K7EG7Z;2021-10-23;t4-livre;34-60;45
 050.039.641-88;João Macieira;jefferey.wehner@lockman.name;2000-10-04;452 Rua Raul Rodrigues;São João da Paraúna;Alagoas;B0000DHDOF;MT;Luiz Felipe Raia Jr.;marshall@brekke-funk.name;2I9EBC;2022-01-10;t4-livre;34-60;5
 ```
+
+
+# Apagando os dados gerados
+Ao executar a aplicação dados serão armazenados para não serem perdidos após o container ser derrubado. Caso queira efetuar o descarte desses dados use:
+<br><br>
+Atenção: será necessário parar todos os containers relacionados em execução antes de usar o comando abaixo.
+- Apagando volumes
+
+    ```bash
+    docker volume rm rebase-challenge_db-data rebase-challenge_redis-cache rebase-challenge_test-db-data
+    ```

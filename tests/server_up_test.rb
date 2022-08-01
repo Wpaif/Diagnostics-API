@@ -64,12 +64,12 @@ class TestServerUp < Test::Unit::TestCase
   def test_token_not_found
     handler = CsvHandler.new('test-db')
     handler.set_table
+    
     CSV.foreach("#{Dir.pwd}/tests_helper/csv/test_token_data.csv", headers: true, col_sep: ';') do |row|
       handler.insert_data_into_database row.fields
     end
 
     response = Net::HTTP.get_response 'localhost', '/diagnostics/ASDFGH', 3000
-    puts "\n\n#{response}\n\n\n"
     assert_equal response.code, '404'
     assert_equal 'text/plain;charset=utf-8', response['Content-Type']
     assert_equal 'Diagnóstico não encontrado.'.force_encoding('ascii-8bit'), response.body

@@ -18,13 +18,13 @@ class TestQueries < Test::Unit::TestCase
     end
     expected_result = JSON.parse File.read("#{Dir.pwd}/tests_helper/json/test_query_db_data.json")
 
-    result = QueriesHandler.set_tests_db
+    result = QueriesHandler.set_diagnostics_db
 
     assert_equal expected_result, JSON.parse(result)
   end
 
   def test_try_get_tests_in_empty_db
-    result = QueriesHandler.set_tests_db
+    result = QueriesHandler.set_diagnostics_db
 
     assert_equal false, result
   end

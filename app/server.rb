@@ -4,7 +4,7 @@ require_relative 'queries_handler'
 require_relative 'sidekiq/import_worker'
 
 get '/diagnostics' do
-  content = QueriesHandler.set_tests_db
+  content = QueriesHandler.set_diagnostics_db
   if content
     content_type :json
     return content

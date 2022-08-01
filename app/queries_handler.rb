@@ -1,7 +1,7 @@
 require 'pg'
 
 class QueriesHandler
-  def self.set_tests_db
+  def self.set_diagnostics_db
     db = PG.connect dbname: 'hospital_data', host: ENV['DB'], user: 'postgres', password: 'mypass'
     result = db.exec('SELECT * FROM diagnostics')
     db.close

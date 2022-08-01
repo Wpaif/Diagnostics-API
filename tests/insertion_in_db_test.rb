@@ -12,7 +12,8 @@ class TestInsert < Test::Unit::TestCase
 
   def test_set_table
     db = PG.connect dbname: 'hospital_data', host: 'test-db', user: 'postgres', password: 'mypass'
-    csv_columns = CSV.read("#{Dir.pwd}/tests_helper/csv/test_enter_one_register.csv", headers: true, col_sep: ';').headers
+    csv_columns = CSV.read("#{Dir.pwd}/tests_helper/csv/test_enter_one_register.csv", headers: true,
+                                                                                      col_sep: ';').headers
 
     CsvHandler.new('test-db').set_table
     db_columns = db.exec("SELECT column_name FROM information_schema.columns WHERE table_name = 'diagnostics'")
@@ -24,7 +25,8 @@ class TestInsert < Test::Unit::TestCase
 
   def test_set_table_that_already_exists
     db = PG.connect dbname: 'hospital_data', host: 'test-db', user: 'postgres', password: 'mypass'
-    csv_columns = CSV.read("#{Dir.pwd}/tests_helper/csv/test_enter_one_register.csv", headers: true, col_sep: ';').headers
+    csv_columns = CSV.read("#{Dir.pwd}/tests_helper/csv/test_enter_one_register.csv", headers: true,
+                                                                                      col_sep: ';').headers
     handler = CsvHandler.new('test-db')
     handler.set_table
 
@@ -45,7 +47,7 @@ class TestInsert < Test::Unit::TestCase
       handler.insert_data_into_database row.fields
     end
 
-    assert_equal expected_db_data, JSON.parse(QueriesHandler.set_tests_db)
+    assert_equal expected_db_data, JSON.parse(QueriesHandler.set_diagnostics_db)
   end
 
   def test_enter_data_multiple_times
@@ -60,7 +62,7 @@ class TestInsert < Test::Unit::TestCase
       handler.insert_data_into_database row.fields
     end
 
-    assert_equal expected_db_data, JSON.parse(QueriesHandler.set_tests_db)
+    assert_equal expected_db_data, JSON.parse(QueriesHandler.set_diagnostics_db)
   end
 
   def test_try_to_enter_data_into_a_non_existent_table
@@ -86,7 +88,10 @@ class TestInsert < Test::Unit::TestCase
     handler.set_table
 
     handler.drop_table
-    table_in_db = db.exec("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'diagnostics')")
+    table_in_db = db.exec("SELECT EXISTS( \
+                          SELECT FROM pg_tables \
+                          WHERE schemaname = 'public' \
+                          AND tablename = 'diagnostics')")
                     .getvalue(0, 0)
     db.close
 
