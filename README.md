@@ -13,15 +13,16 @@ API em Ruby para listagem de exames médicos.
 - Execute o seguinte comando num emulador de terminal:
 
     ```bash
-    docker compose up -d
-    ```
-- Caso deseje ver o log use:
-    ```bash
     docker compose up
     ```
+- Caso não deseje ver os logs use:
+    ```bash
+    docker compose up -d
+    ```
+    Atenção: O container ficará em execução em segundo plano dessa maneira.
 ### Executando testes
 
-Atenção: A aplicação só poderá ser testada se ela estiver em execução localmente.
+A aplicação só poderá ser testada se ela estiver em execução.
 
 - Execute o seguinte comando num emulador de terminal:
 
@@ -30,6 +31,7 @@ Atenção: A aplicação só poderá ser testada se ela estiver em execução lo
     ```
 
 ## Importando os dados do arquivo CSV de forma assíncrona 
+Usando o comando abaixo um script será executado importando todos os dados do arquivo data.csv de forma assíncrona para o banco de dados.
 ```bash
     bash import
 ```
@@ -78,7 +80,7 @@ Ao realizar uma requisição em <localhost:3000/diagnostics>, será retornado to
 ]
 ```
 ### GET /diagnostics/:token
-Ao relizar uma requisição válida, será possível efetuar uma consulta. Caso haja algum token conrespondente nos registros do banco de dados, uma busca será efetuada e terá como retorno os dados referentes a tal pessoa, como:
+Ao relizar uma requisição válida, será possível efetuar uma consulta. Caso haja algum token conrespondente nos registros do banco de dados, uma busca será efetuada e terá como retorno os dados referentes a tal, como:
 ```json
 {
     "cpf":"048.108.026-04",
@@ -108,5 +110,9 @@ Ao relizar uma requisição válida, será possível efetuar uma consulta. Caso 
 }
 ```
 ### POST /insert
-Ao realizar uma requisição em **localhost:3000/insert**, será possível adicionar novos diagnósticos ao banco de dados por meio de um arquivo CSV válido.
-
+Ao realizar uma requisição em **localhost:3000/insert**, será possível adicionar novos diagnósticos ao banco de dados por meio de um arquivo CSV válido. <br><br> O CSV será válido quando for análogo a:
+```
+cpf;nome paciente;email paciente;data nascimento paciente;endereço/rua paciente;cidade paciente;estado patiente;crm médico;crm médico estado;nome médico;email médico;token resultado exame;data exame;tipo exame;limites tipo exame;resultado tipo exame
+089.034.562-70;Patricia Gentil;herta_wehner@krajcik.name;1998-02-25;5334 Rodovia Thiago Bittencourt;Jequitibá;Paraná;B0000DHDOF;MT;Luiz Felipe Raia Jr.;marshall@brekke-funk.name;K7EG7Z;2021-10-23;t4-livre;34-60;45
+050.039.641-88;João Macieira;jefferey.wehner@lockman.name;2000-10-04;452 Rua Raul Rodrigues;São João da Paraúna;Alagoas;B0000DHDOF;MT;Luiz Felipe Raia Jr.;marshall@brekke-funk.name;2I9EBC;2022-01-10;t4-livre;34-60;5
+```
