@@ -72,14 +72,13 @@ Ao realizar uma requisição em <localhost:3000/diagnostics>, será retornado to
         "token resultado exame":"IQCZ17",
         "data exame":"2021-08-05",
         "tipo exame":"t4-livre",
-        "limites t
-        ipo exame":"34-60",
+        "limites tipo exame":"34-60",
         "resultado tipo exame":"94"
     }
 ]
 ```
 ### GET /diagnostics/:token
-Ao relizar um requisição que segue esse molde, será possível efetuar uma consulta no banco de dados. Caso haja algum token conrespondente nos registros do banco de dados, uma busca será efetuada e terá como retorno os dados referentes a tal pessoa, como:
+Ao relizar uma requisição válida, será possível efetuar uma consulta. Caso haja algum token conrespondente nos registros do banco de dados, uma busca será efetuada e terá como retorno os dados referentes a tal pessoa, como:
 ```json
 {
     "cpf":"048.108.026-04",
@@ -93,7 +92,7 @@ Ao relizar um requisição que segue esse molde, será possível efetuar uma con
             "crm médico estado":"SC",
             "nome médico":"Maria Helena Ramalho"
     },
-    "diagnóstico": 
+    "diagnósticos": 
         [
             {
                 "tipo exame":"hdl",

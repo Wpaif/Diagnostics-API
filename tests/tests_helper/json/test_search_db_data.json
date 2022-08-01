@@ -10,7 +10,7 @@
     "crm médico estado": "SP",
     "nome médico": "Dra. Isabelly Rêgo"
   },
-  "diagnóstico": [
+  "diagnósticos": [
     {
       "tipo exame": "t4-livre",
       "limites tipo exame": "34-60",

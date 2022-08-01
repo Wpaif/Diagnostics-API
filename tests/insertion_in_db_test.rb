@@ -25,10 +25,10 @@ class TestInsert < Test::Unit::TestCase
   def test_set_table_that_already_exists
     db = PG.connect dbname: 'hospital_data', host: 'test-db', user: 'postgres', password: 'mypass'
     csv_columns = CSV.read("#{Dir.pwd}/tests_helper/csv/test_enter_one_register.csv", headers: true, col_sep: ';').headers
-    service = CsvHandler.new('test-db')
-    service.set_table
+    handler = CsvHandler.new('test-db')
+    handler.set_table
 
-    service.set_table
+    handler.set_table
     db_columns = db.exec("SELECT column_name FROM information_schema.columns WHERE table_name = 'diagnostics'")
                    .values.flatten
     db.close
@@ -38,54 +38,54 @@ class TestInsert < Test::Unit::TestCase
 
   def test_enter_data_successfully
     expected_db_data = JSON.parse File.read("#{Dir.pwd}/tests_helper/json/test_one_db_data.json")
-    service = CsvHandler.new('test-db')
-    service.set_table
+    handler = CsvHandler.new('test-db')
+    handler.set_table
 
     CSV.foreach("#{Dir.pwd}/tests_helper/csv/test_enter_one_register.csv", headers: true, col_sep: ';') do |row|
-      service.insert_data_into_database row.fields
+      handler.insert_data_into_database row.fields
     end
 
     assert_equal expected_db_data, JSON.parse(QueriesHandler.set_tests_db)
   end
 
   def test_enter_data_multiple_times
-    service = CsvHandler.new('test-db')
-    service.set_table
+    handler = CsvHandler.new('test-db')
+    handler.set_table
     expected_db_data = JSON.parse File.read("#{Dir.pwd}/tests_helper/json/test_multiple_insertion_data.json")
 
     CSV.foreach("#{Dir.pwd}/tests_helper/csv/test_enter_one_register.csv", headers: true, col_sep: ';') do |row|
-      service.insert_data_into_database row.fields
+      handler.insert_data_into_database row.fields
     end
     CSV.foreach("#{Dir.pwd}/tests_helper/csv/test_enter_one_register_extra.csv", headers: true, col_sep: ';') do |row|
-      service.insert_data_into_database row.fields
+      handler.insert_data_into_database row.fields
     end
 
     assert_equal expected_db_data, JSON.parse(QueriesHandler.set_tests_db)
   end
 
   def test_try_to_enter_data_into_a_non_existent_table
-    service = CsvHandler.new('test-db')
+    handler = CsvHandler.new('test-db')
 
     CSV.foreach("#{Dir.pwd}/tests_helper/csv/test_enter_one_register.csv", headers: true, col_sep: ';') do |row|
-      assert_raise(PG::UndefinedTable) { service.insert_data_into_database row.fields }
+      assert_raise(PG::UndefinedTable) { handler.insert_data_into_database row.fields }
     end
   end
 
   def test_enter_data_invalid
-    service = CsvHandler.new('test-db')
-    service.set_table
+    handler = CsvHandler.new('test-db')
+    handler.set_table
 
     CSV.foreach("#{Dir.pwd}/tests_helper/csv/test_invalid_data.csv", headers: true, col_sep: ';') do |row|
-      assert_raise(PG::ProtocolViolation) { service.insert_data_into_database row.fields }
+      assert_raise(PG::ProtocolViolation) { handler.insert_data_into_database row.fields }
     end
   end
 
   def test_drop_table_successfully
     db = PG.connect dbname: 'hospital_data', host: 'test-db', user: 'postgres', password: 'mypass'
-    service = CsvHandler.new('test-db')
-    service.set_table
+    handler = CsvHandler.new('test-db')
+    handler.set_table
 
-    service.drop_table
+    handler.drop_table
     table_in_db = db.exec("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'diagnostics')")
                     .getvalue(0, 0)
     db.close

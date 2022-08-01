@@ -10,7 +10,7 @@ class QueriesHandler
     false
   end
 
-  def self.get_tests_token(token)
+  def self.get_diagnostic_token(token)
     db = PG.connect dbname: 'hospital_data', host: ENV['DB'], user: 'postgres', password: 'mypass'
     query = %(SELECT * FROM diagnostics WHERE "token resultado exame" = '#{token}')
     result = db.exec(query)
@@ -24,7 +24,7 @@ class QueriesHandler
     first_row = result.first
     data = first_row.select { |key, _value| patient_columns.include?(key) }
     data['médico'] = first_row.select { |key, _value| physician_columns.include?(key) }
-    data['diagnóstico'] = result.map { |row| row.select { |key, _value| exam_columns.include?(key) } }
+    data['diagnósticos'] = result.map { |row| row.select { |key, _value| exam_columns.include?(key) } }
     data.to_json
   end
 end

@@ -11,10 +11,10 @@ class TestQueries < Test::Unit::TestCase
   end
 
   def test_try_get_tests_successfully
-    service = CsvHandler.new('test-db')
-    service.set_table
+    handler = CsvHandler.new('test-db')
+    handler.set_table
     CSV.foreach("#{Dir.pwd}/tests_helper/csv/test_query_data.csv", headers: true, col_sep: ';') do |row|
-      service.insert_data_into_database row.fields
+      handler.insert_data_into_database row.fields
     end
     expected_result = JSON.parse File.read("#{Dir.pwd}/tests_helper/json/test_query_db_data.json")
 
@@ -29,27 +29,27 @@ class TestQueries < Test::Unit::TestCase
     assert_equal false, result
   end
 
-  def test_get_tests_token_success
-    service = CsvHandler.new('test-db')
-    service.set_table
+  def test_get_diagnostic_token_successfully
+    handler = CsvHandler.new('test-db')
+    handler.set_table
     CSV.foreach("#{Dir.pwd}/tests_helper/csv/test_token_data.csv", headers: true, col_sep: ';') do |row|
-      service.insert_data_into_database row.fields
+      handler.insert_data_into_database row.fields
     end
     expected_result = JSON.parse File.read("#{Dir.pwd}/tests_helper/json/test_search_db_data.json")
 
-    result = QueriesHandler.get_tests_token('AIWH8Y')
+    result = QueriesHandler.get_diagnostic_token('AIWH8Y')
 
     assert_equal expected_result, JSON.parse(result)
   end
 
   def test_token_not_found
-    service = CsvHandler.new('test-db')
-    service.set_table
+    handler = CsvHandler.new('test-db')
+    handler.set_table
     CSV.foreach("#{Dir.pwd}/tests_helper/csv/test_token_data.csv", headers: true, col_sep: ';') do |row|
-      service.insert_data_into_database row.fields
+      handler.insert_data_into_database row.fields
     end
 
-    result = QueriesHandler.get_tests_token('ASDFGH')
+    result = QueriesHandler.get_diagnostic_token('ASDFGH')
 
     assert_equal false, result
   end

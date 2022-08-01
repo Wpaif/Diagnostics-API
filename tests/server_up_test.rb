@@ -13,10 +13,10 @@ class TestServerUp < Test::Unit::TestCase
   end
 
   def test_get_tests_successfully
-    service = CsvHandler.new('test-db')
-    service.set_table
+    handler = CsvHandler.new('test-db')
+    handler.set_table
     CSV.foreach("#{Dir.pwd}/tests_helper/csv/test_query_data.csv", headers: true, col_sep: ';') do |row|
-      service.insert_data_into_database row.fields
+      handler.insert_data_into_database row.fields
     end
     expected_response_body = JSON.parse File.read("#{Dir.pwd}/tests_helper/json/test_query_db_data.json")
 
@@ -47,10 +47,10 @@ class TestServerUp < Test::Unit::TestCase
   end
 
   def token_found_successfully
-    service = CsvHandler.new('test-db')
-    service.set_table
+    handler = CsvHandler.new('test-db')
+    handler.set_table
     CSV.foreach("#{Dir.pwd}/tests_helper/test_token_data.csv", headers: true, col_sep: ';') do |row|
-      service.insert_data_into_database row.fields
+      handler.insert_data_into_database row.fields
     end
     expected_response_body = JSON.parse(File.read("#{Dir.pwd}/tests_helper/json/test_token_db_data.json"))
 
@@ -62,10 +62,10 @@ class TestServerUp < Test::Unit::TestCase
   end
 
   def token_not_found
-    service = CsvHandler.new('test-db')
-    service.set_table
+    handler = CsvHandler.new('test-db')
+    handler.set_table
     CSV.foreach("#{Dir.pwd}/tests_helper/csv/test_token_data.csv", headers: true, col_sep: ';') do |row|
-      service.insert_data_into_database row.fields
+      handler.insert_data_into_database row.fields
     end
     expected_response_body = JSON.parse(File.read("#{Dir.pwd}/tests_helper/json/test_token_db_data.json"))
 
