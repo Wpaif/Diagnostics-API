@@ -10,7 +10,7 @@ API em Ruby para listagem de exames médicos.
 
 ## Executando a aplicação localmente
 
-- Execute o seguinte comando num emulador de terminal:
+- Execute o seguinte comando no emulador de terminal:
 
     ```bash
     docker compose up
@@ -19,26 +19,26 @@ API em Ruby para listagem de exames médicos.
     ```bash
     docker compose up -d
     ```
-    Atenção: O container ficará em execução em segundo plano dessa maneira.
+    Atenção: o container ficará em execução em segundo plano dessa maneira.
 ### Executando testes
 
 A aplicação só poderá ser testada se ela estiver em execução.
 
-- Execute o seguinte comando num emulador de terminal:
+- Execute o seguinte comando no emulador de terminal:
 
     ```bash
     bash test
     ```
 
 ## Importando os dados do arquivo CSV de forma assíncrona 
-Usando o comando abaixo um script será executado importando todos os dados do arquivo data.csv de forma assíncrona para o banco de dados.
+Usando o comando abaixo um script será executado importando todos os dados do arquivo **data.csv** de forma assíncrona para o banco de dados.
 ```bash
     bash import
 ```
 ## Endpoints
 
 ### GET /diagnostics
-Ao realizar uma requisição em <localhost:3000/diagnostics>, será retornado todos os diagnósticos disponiveis no momento, como:
+Ao realizar uma requisição em <localhost:3000/diagnostics>, será retornado todos os diagnósticos disponíveis no momento, como:
 ```json
 [
     {
@@ -80,7 +80,7 @@ Ao realizar uma requisição em <localhost:3000/diagnostics>, será retornado to
 ]
 ```
 ### GET /diagnostics/:token
-Ao relizar uma requisição válida, será possível efetuar uma consulta. Caso haja algum token conrespondente nos registros do banco de dados, uma busca será efetuada e terá como retorno os dados referentes a tal, como:
+Ao relizar uma requisição válida, será possível efetuar uma consulta. Caso haja algum token conrrespondente nos registros do banco de dados, uma busca será efetuada e terá como retorno os dados referentes a tal, como:
 ```json
 {
     "cpf":"048.108.026-04",
