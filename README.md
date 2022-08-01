@@ -122,7 +122,7 @@ cpf;nome paciente;email paciente;data nascimento paciente;endereço/rua paciente
 Ao executar a aplicação dados serão armazenados para não serem perdidos após o container ser derrubado. Caso queira efetuar o descarte desses dados use:
 <br><br>
 Atenção: será necessário parar todos os containers relacionados em execução antes de usar o comando abaixo.
-- Apagando volumes
+- Apagando volumes:
 
     ```bash
     docker volume rm rebase-challenge_db-data rebase-challenge_redis-cache rebase-challenge_test-db-data
