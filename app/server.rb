@@ -15,7 +15,7 @@ get '/diagnostics' do
 end
 
 get '/diagnostics/:token' do
-  content = QueriesHandler.get_tests_token(params[:token])
+  content = QueriesHandler.get_diagnostic_token(params[:token])
   if content
     content_type :json
     return content

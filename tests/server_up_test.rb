@@ -18,13 +18,13 @@ class TestServerUp < Test::Unit::TestCase
     CSV.foreach("#{Dir.pwd}/tests_helper/csv/test_query_data.csv", headers: true, col_sep: ';') do |row|
       handler.insert_data_into_database row.fields
     end
-    expected_response_body = JSON.parse File.read("#{Dir.pwd}/tests_helper/json/test_query_db_data.json")
+    expected_body = JSON.parse File.read("#{Dir.pwd}/tests_helper/json/test_query_db_data.json")
 
     response = Net::HTTP.get_response 'localhost', '/diagnostics', 3000
 
     assert_equal response.code, '200'
     assert_equal 'application/json', response['Content-Type']
-    assert_equal expected_response_body, JSON.parse(response.body)
+    assert_equal expected_body, JSON.parse(response.body)
   end
 
   def test_get_tests_in_empty_db
@@ -46,31 +46,30 @@ class TestServerUp < Test::Unit::TestCase
     assert_equal 'Os dados pasados estão no formato inválido.'.force_encoding('ascii-8bit'), response.body
   end
 
-  def token_found_successfully
-    handler = CsvHandler.new('test-db')
-    handler.set_table
-    CSV.foreach("#{Dir.pwd}/tests_helper/test_token_data.csv", headers: true, col_sep: ';') do |row|
-      handler.insert_data_into_database row.fields
-    end
-    expected_response_body = JSON.parse(File.read("#{Dir.pwd}/tests_helper/json/test_token_db_data.json"))
-
-    response = Net::HTTP.get_response 'localhost', '/diagnostics/AIWH8Y', 3000
-
-    assert_equal response.code, '200'
-    assert_equal 'application/json', response['Content-Type']
-    assert_equal expected_response_body, JSON.parse(response.body)
-  end
-
-  def token_not_found
+  def test_token_found_successfully
     handler = CsvHandler.new('test-db')
     handler.set_table
     CSV.foreach("#{Dir.pwd}/tests_helper/csv/test_token_data.csv", headers: true, col_sep: ';') do |row|
       handler.insert_data_into_database row.fields
     end
-    expected_response_body = JSON.parse(File.read("#{Dir.pwd}/tests_helper/json/test_token_db_data.json"))
+    expected_body = JSON.parse(File.read("#{Dir.pwd}/tests_helper/json/test_search_db_data.json"))
 
-    response = Net::HTTP.get_response 'localhost', '/diagnostics/ABCDEF', 3000
+    response = Net::HTTP.get_response 'localhost', '/diagnostics/AIWH8Y', 3000
 
+    assert_equal response.code, '200'
+    assert_equal 'application/json', response['Content-Type']
+    assert_equal expected_body, JSON.parse(response.body)
+  end
+
+  def test_token_not_found
+    handler = CsvHandler.new('test-db')
+    handler.set_table
+    CSV.foreach("#{Dir.pwd}/tests_helper/csv/test_token_data.csv", headers: true, col_sep: ';') do |row|
+      handler.insert_data_into_database row.fields
+    end
+
+    response = Net::HTTP.get_response 'localhost', '/diagnostics/ASDFGH', 3000
+    puts "\n\n#{response}\n\n\n"
     assert_equal response.code, '404'
     assert_equal 'text/plain;charset=utf-8', response['Content-Type']
     assert_equal 'Diagnóstico não encontrado.'.force_encoding('ascii-8bit'), response.body
