@@ -1,4 +1,4 @@
-# Rebase Challenge
+# Diagnostics
 
 API em Ruby para listagem de exames médicos.
 
